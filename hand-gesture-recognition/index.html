@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hand Gesture Recognition · webV1.0 Rev 3</title>
+
+  <!-- Font: Space Grotesk (display) + Inter (body) + JetBrains Mono (telemetri) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap"
+    rel="stylesheet"
+  />
+
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div class="shell">
+
+    <!-- ============ HEADER ============ -->
+    <header class="topbar">
+      <div class="brand">
+        <h1>Hand Gesture Recognition</h1>
+        <span class="ver">webV1.0 Rev 3</span>
+      </div>
+      <div class="status-group">
+        <div class="status">
+          <span class="status-dot" id="status-dot" data-state="idle"></span>
+          <span id="status-text">Memuat…</span>
+        </div>
+        <div class="status">
+          <span class="status-dot" id="bridge-dot" data-state="idle"></span>
+          <span id="bridge-text">Bridge —</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- ============ DECK UTAMA ============ -->
+    <main class="deck">
+
+      <!-- ----- Kolom kiri: panggung kamera ----- -->
+      <section>
+        <div class="stage" id="stage">
+          <video id="video" playsinline muted></video>
+          <canvas id="overlay"></canvas>
+        </div>
+
+        <div class="controls">
+          <button class="btn" id="btn-toggle" data-state="idle">Mulai Kamera</button>
+          <button class="btn-ghost btn" id="btn-mirror" data-on="true">Cermin</button>
+          <button class="btn-ghost btn" id="btn-pip" data-on="false">Kamera Melayang (PiP)</button>
+        </div>
+      </section>
+
+      <!-- ----- Kolom kanan: panel telemetri ----- -->
+      <aside class="side">
+
+        <!-- Telemetri gesture aktif -->
+        <div class="card telemetry" id="telemetry" data-accent="none">
+          <h2>Gesture Terdeteksi</h2>
+          <p class="gesture-name" id="gesture-name">—</p>
+          <p class="action-label" id="action-label">tidak dipetakan</p>
+
+          <div class="keybind-row">
+            <span class="keybind-tag">Keybind</span>
+            <span class="keybind-key" id="keybind-value">—</span>
+          </div>
+
+          <div class="conf">
+            <div class="conf-track">
+              <div class="conf-fill" id="conf-bar"></div>
+            </div>
+            <div class="conf-meta">
+              <span>keyakinan</span>
+              <span id="conf-value">0%</span>
+            </div>
+          </div>
+
+          <div class="metrics">
+            <div class="metric">
+              <div class="k">Tangan</div>
+              <div class="v" id="hands-value">0</div>
+            </div>
+            <div class="metric">
+              <div class="k">FPS</div>
+              <div class="v" id="fps-value">0</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Log aksi terpicu -->
+        <div class="card">
+          <h2>Log Aksi</h2>
+          <ul class="log-list" id="action-log">
+            <li class="log-empty" data-empty>Belum ada aksi. Tunjukkan gesture ke kamera.</li>
+          </ul>
+        </div>
+
+        <!-- Peta gesture → arti (KBBI) → keybind -->
+        <div class="card">
+          <h2>Peta Gesture &amp; Keybind</h2>
+          <div class="cheatsheet">
+            <div class="cheat">✌️ <b>Berikutnya</b> <kbd>→</kbd></div>
+            <div class="cheat">🤟 <b>Tandai</b> <kbd>←</kbd></div>
+            <div class="cheat">👍 <b>Setuju</b> <kbd>↑</kbd></div>
+            <div class="cheat">👎 <b>Tolak</b> <kbd>↓</kbd></div>
+            <div class="cheat">☝️ <b>Naik</b> <kbd>⊞ Win</kbd></div>
+            <div class="cheat">✋ <b>Berhenti</b> <kbd>Esc</kbd></div>
+            <div class="cheat">✊ <b>Pilih</b> <kbd>Enter</kbd></div>
+          </div>
+        </div>
+
+      </aside>
+    </main>
+
+    <!-- ============ FOOTER ============ -->
+    <footer class="foot">
+      <span>Engine: MediaPipe Tasks Vision · GestureRecognizer (client-side)</span>
+      <span>Hand Gesture Recognition · webV1.0 Rev 3</span>
+    </footer>
+
+  </div>
+
+  <!-- Entry point (ES module). Memuat seluruh rantai modul. -->
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,4 @@
+# Pasang dengan:  pip install -r requirements.txt
+
+websockets>=14.0     # server WebSocket 
+pyautogui>=0.9.54    # menekan tombol pada level sistem operasi

@@ -1,0 +1,430 @@
+/* ----- Token warna & tipografi ----- */
+:root {
+  --bg:        #0E1420;
+  --surface:   #161E2E;
+  --surface-2: #1E2940;
+  --line:      #2A3650;
+  --ink:       #E8EDF4;
+  --muted:     #8595B0;
+
+  --c-amber:   #FFB454;
+  --c-teal:    #36D6C3;
+  --c-green:   #5BD6A0;
+  --c-red:     #FF6B6B;
+  --c-violet:  #9B8CFF;
+
+  --font-display: "Space Grotesk", system-ui, sans-serif;
+  --font-body:    "Inter", system-ui, sans-serif;
+  --font-mono:    "JetBrains Mono", ui-monospace, monospace;
+
+  --radius: 14px;
+  --gap: 20px;
+}
+
+/* ----- Reset ringan ----- */
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  background:
+    radial-gradient(1200px 600px at 80% -10%, #18233a 0%, transparent 60%),
+    var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+}
+
+a { color: var(--c-teal); }
+
+/* ----- Layout dasar ----- */
+.shell {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 28px 24px 48px;
+}
+
+/* ===================== HEADER ===================== */
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.brand {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+}
+
+.brand h1 {
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+
+.brand .ver {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--c-amber);
+  border: 1px solid var(--line);
+  padding: 3px 8px;
+  border-radius: 999px;
+}
+
+/* Grup indikator status (engine + bridge) */
+.status-group {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* Indikator status engine/kamera */
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--muted);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  padding: 8px 14px;
+  border-radius: 999px;
+}
+
+.status-dot {
+  width: 9px; height: 9px;
+  border-radius: 50%;
+  background: var(--muted);
+  box-shadow: 0 0 0 0 transparent;
+}
+.status-dot[data-state="loading"] { background: var(--c-amber); animation: blink 1s infinite; }
+.status-dot[data-state="ready"]   { background: var(--c-green); box-shadow: 0 0 10px 1px var(--c-green); }
+.status-dot[data-state="error"]   { background: var(--c-red); }
+.status-dot[data-state="idle"]    { background: var(--muted); }
+
+@keyframes blink { 50% { opacity: 0.25; } }
+
+/* ===================== GRID UTAMA ===================== */
+.deck {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: var(--gap);
+  align-items: start;
+}
+
+/* ----- Panggung kamera ----- */
+.stage {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  background: #000;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.stage video,
+.stage canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Tampilan cermin: balik horizontal video + overlay bersamaan agar sejajar */
+.stage.mirror video,
+.stage.mirror canvas { transform: scaleX(-1); }
+
+/* Bingkai sudut bergaya HUD */
+.stage::after {
+  content: "";
+  position: absolute;
+  inset: 12px;
+  border: 1px solid rgba(54, 214, 195, 0.18);
+  border-radius: 8px;
+  pointer-events: none;
+}
+
+/* Efek pulsa saat aksi terpicu */
+.stage.pulse {
+  animation: stagePulse 0.5s ease-out;
+}
+.stage[data-accent="amber"].pulse  { animation-name: pulseAmber; }
+.stage[data-accent="teal"].pulse   { animation-name: pulseTeal; }
+.stage[data-accent="green"].pulse  { animation-name: pulseGreen; }
+.stage[data-accent="red"].pulse    { animation-name: pulseRed; }
+.stage[data-accent="violet"].pulse { animation-name: pulseViolet; }
+
+@keyframes pulseAmber  { from { box-shadow: inset 0 0 0 3px var(--c-amber); }  to { box-shadow: inset 0 0 0 0 transparent; } }
+@keyframes pulseTeal   { from { box-shadow: inset 0 0 0 3px var(--c-teal); }   to { box-shadow: inset 0 0 0 0 transparent; } }
+@keyframes pulseGreen  { from { box-shadow: inset 0 0 0 3px var(--c-green); }  to { box-shadow: inset 0 0 0 0 transparent; } }
+@keyframes pulseRed    { from { box-shadow: inset 0 0 0 3px var(--c-red); }    to { box-shadow: inset 0 0 0 0 transparent; } }
+@keyframes pulseViolet { from { box-shadow: inset 0 0 0 3px var(--c-violet); } to { box-shadow: inset 0 0 0 0 transparent; } }
+
+/* ----- Kontrol di bawah panggung ----- */
+.controls {
+  display: flex;
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.btn {
+  font-family: var(--font-display);
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--bg);
+  background: var(--c-teal);
+  border: none;
+  border-radius: 10px;
+  padding: 12px 20px;
+  cursor: pointer;
+  transition: filter 0.15s ease, transform 0.05s ease;
+}
+.btn:hover { filter: brightness(1.08); }
+.btn:active { transform: translateY(1px); }
+.btn:disabled { opacity: 0.5; cursor: progress; }
+.btn[data-state="running"] { background: var(--c-red); color: var(--ink); }
+
+.btn-ghost {
+  background: var(--surface);
+  color: var(--ink);
+  border: 1px solid var(--line);
+}
+.btn-ghost[data-on="true"] { border-color: var(--c-teal); color: var(--c-teal); }
+
+.btn:focus-visible,
+.btn-ghost:focus-visible {
+  outline: 2px solid var(--c-amber);
+  outline-offset: 2px;
+}
+
+/* ===================== PANEL SAMPING ===================== */
+.side {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap);
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 18px;
+}
+
+.card h2 {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 0 0 14px;
+}
+
+/* ----- Telemetri gesture ----- */
+.telemetry {
+  --accent: var(--muted);
+}
+.telemetry[data-accent="amber"]  { --accent: var(--c-amber); }
+.telemetry[data-accent="teal"]   { --accent: var(--c-teal); }
+.telemetry[data-accent="green"]  { --accent: var(--c-green); }
+.telemetry[data-accent="red"]    { --accent: var(--c-red); }
+.telemetry[data-accent="violet"] { --accent: var(--c-violet); }
+
+.gesture-name {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 600;
+  line-height: 1.1;
+  color: var(--accent);
+  margin: 0;
+  word-break: break-word;
+}
+
+.action-label {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: var(--muted);
+  margin: 6px 0 12px;
+}
+
+/* Baris keybind aktif */
+.keybind-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 16px;
+}
+.keybind-tag {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.keybind-key {
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  color: var(--accent);
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 4px 12px;
+}
+
+/* Bar keyakinan */
+.conf {
+  margin-top: 4px;
+}
+.conf-track {
+  height: 8px;
+  background: var(--surface-2);
+  border-radius: 999px;
+  overflow: hidden;
+}
+.conf-fill {
+  height: 100%;
+  width: 0%;
+  background: var(--accent);
+  border-radius: 999px;
+  transition: width 0.12s linear;
+}
+.conf-meta {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--muted);
+  margin-top: 6px;
+}
+
+/* Metrik kecil */
+.metrics {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 16px;
+}
+.metric {
+  background: var(--surface-2);
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+.metric .k {
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.metric .v {
+  font-family: var(--font-mono);
+  font-size: 1.25rem;
+  color: var(--ink);
+}
+
+/* ----- Log aksi ----- */
+.log-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 280px;
+  overflow-y: auto;
+}
+.log-empty {
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+.log-row {
+  --accent: var(--muted);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--surface-2);
+  border-left: 3px solid var(--accent);
+  border-radius: 8px;
+  padding: 10px 12px;
+}
+.log-row[data-accent="amber"]  { --accent: var(--c-amber); }
+.log-row[data-accent="teal"]   { --accent: var(--c-teal); }
+.log-row[data-accent="green"]  { --accent: var(--c-green); }
+.log-row[data-accent="red"]    { --accent: var(--c-red); }
+.log-row[data-accent="violet"] { --accent: var(--c-violet); }
+
+.log-icon { font-size: 1.3rem; }
+.log-body { display: flex; flex-direction: column; flex: 1; }
+.log-label { font-size: 0.88rem; }
+.log-action {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  color: var(--muted);
+}
+.log-time {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--muted);
+}
+
+/* ----- Daftar gesture yang didukung ----- */
+.cheatsheet {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.cheat {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+.cheat b { color: var(--ink); font-weight: 500; }
+.cheat kbd {
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  color: var(--c-amber);
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 2px 7px;
+  white-space: nowrap;
+}
+
+/* ===================== FOOTER ===================== */
+.foot {
+  margin-top: 36px;
+  padding-top: 18px;
+  border-top: 1px solid var(--line);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--muted);
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+/* ===================== RESPONSIVE ===================== */
+@media (max-width: 880px) {
+  .deck { grid-template-columns: 1fr; }
+  .side { order: 2; }
+}
+
+/* ===================== AKSESIBILITAS ===================== */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}
